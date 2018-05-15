@@ -66,30 +66,88 @@ def run_train_test(training_input, testing_input):
         confusion[3,i] = tst_info[i+1]
     confusion[3,3] = np.sum(confusion[3,:])
 
+    A_tst = tst[:tst_info[1]]
+    B_tst = tst[tst_info[1]:tst_info[1]+tst_info[2]]
+    C_tst = tst[tst_info[1]+tst_info[2]:]
+
     for example in tst:
-        AB_score = np.dot(AB_classifier[:3], example) + AB_classifier[3]
+        AB_score = np.dot(AB_classifier[:tst_info[0]], example) + AB_classifier[tst_info[0]]
         if AB_score >= 0:
-            AC_score = np.dot(AC_classifier[:3], example) + AC_classifier[3]
+            AC_score = np.dot(AC_classifier[:tst_info[0]], example) + AC_classifier[tst_info[0]]
             if AC_score >= 0:
+                # predict A
                 confusion[0,3] += 1
+                if example in A_tst:
+                    confusion[0,0] += 1
+                elif example in B_tst:
+                    confusion[0,1] += 1
+                else:
+                    confusion[0,2] += 1
             else:
+                # predict C
                 confusion[2,3] += 1
+                if example in C_tst:
+                    confusion[2,2] += 1
+                elif example in A_tst:
+                    confusion[2,0] += 1
+                else:
+                    confusion[2,1] += 1
         else:
-            BC_score = np.dot(BC_classifier[:3], example) + BC_classifier[3]
+            BC_score = np.dot(BC_classifier[:tst_info[0]], example) + BC_classifier[tst_info[0]]
             if BC_score >= 0:
+                # predict B
                 confusion[1,3] += 1
+                if example in B_tst:
+                    confusion[1,1] += 1
+                elif example in A_tst:
+                    confusion[1,0] += 1
+                else:
+                    confusion[1,2] += 1
             else:
+                # predict C
                 confusion[2,3] += 1
+                if example in C_tst:
+                    confusion[2,2] += 1
+                elif example in A_tst:
+                    confusion[2,0] += 1
+                else:
+                    confusion[2,1] += 1
+                
+        i += 1
     print confusion
 
+    tpr_A = confusion[0,0]/confusion[3,0]
+    tpr_B = confusion[1,1]/confusion[3,1]
+    tpr_C = confusion[2,2]/confusion[3,2]
+    true_positive_rate = (tpr_A+tpr_B+tpr_C)/3
 
-    # return {
-    #     "tpr": true_positive_rate,
-    #     "fpr": false_positive_rate,
-    #     "error_rate": error_rate,
-    #     "accuracy": accuracy,
-    #     "precision": precision
-    # }
+    fpr_A = (confusion[0,3]-confusion[0,0])/(confusion[3,3]-confusion[3,0])
+    fpr_B = (confusion[1,3]-confusion[1,1])/(confusion[3,3]-confusion[3,1])
+    fpr_C = (confusion[2,3]-confusion[2,2])/(confusion[3,3]-confusion[3,2])
+    false_positive_rate = (fpr_A+fpr_B+fpr_C)/3
+
+    error_A = (fpr_A*(confusion[3,3]-confusion[3,0])+(1-tpr_A)*confusion[3,0])/confusion[3,3]
+    error_B = (fpr_B*(confusion[3,3]-confusion[3,1])+(1-tpr_B)*confusion[3,1])/confusion[3,3]
+    error_C = (fpr_C*(confusion[3,3]-confusion[3,2])+(1-tpr_C)*confusion[3,2])/confusion[3,3]
+    error_rate = (error_A+error_B+error_C)/3
+
+    a_A = (confusion[3,0]*tpr_A+(confusion[3,1]+confusion[3,2])*(1-fpr_A))/confusion[3,3]
+    a_B = (confusion[3,1]*tpr_B+(confusion[3,0]+confusion[3,2])*(1-fpr_B))/confusion[3,3]
+    a_C = (confusion[3,2]*tpr_C+(confusion[3,0]+confusion[3,1])*(1-fpr_C))/confusion[3,3]
+    accuracy = (a_A+a_B+a_C)/3
+
+    p_A = confusion[0,0]/confusion[0,3]
+    p_B = confusion[1,1]/confusion[1,3]
+    p_C = confusion[2,2]/confusion[2,3]
+    precision = (p_A+p_B+p_C)/3
+
+    return {
+        "tpr": true_positive_rate,
+        "fpr": false_positive_rate,
+        "error_rate": error_rate,
+        "accuracy": accuracy,
+        "precision": precision
+    }
 
 #######
 # The following functions are provided for you to test your classifier.
