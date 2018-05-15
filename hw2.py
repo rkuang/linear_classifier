@@ -29,10 +29,25 @@ def run_train_test(training_input, testing_input):
     """
 
     # TODO: IMPLEMENT
-    training = np.array(training_input[1:])
-    testing = np.array(testing_input[1:])
-    
-    print training.shape, testing.shape
+    trn_info = training_input[0]
+    tst_info = testing_input[0]
+
+    trn = np.array(training_input[1:])
+    tst = np.array(testing_input[1:])
+
+    A_trn = trn[:trn_info[1]]
+    B_trn = trn[trn_info[1]:trn_info[1]+trn_info[2]]
+    C_trn = trn[trn_info[1]+trn_info[2]:]
+
+    A_tst = tst[:tst_info[1]]
+    B_tst = tst[tst_info[1]:tst_info[1]+tst_info[2]]
+    C_tst = tst[tst_info[1]+tst_info[2]:]
+
+    print trn.shape, tst.shape
+    print A_trn.shape, B_trn.shape, C_trn.shape
+    print A_tst.shape, B_tst.shape, C_tst.shape
+
+    return -42
 
 
 #######
