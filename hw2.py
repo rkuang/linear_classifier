@@ -28,39 +28,44 @@ def run_train_test(training_input, testing_input):
             }
     """
 
-    # TODO: IMPLEMENT
+    # Get number of examples per class
     trn_info = training_input[0]
     tst_info = testing_input[0]
 
+    # discount the metadata
     trn = np.array(training_input[1:])
     tst = np.array(testing_input[1:])
 
+    # separate the training data
     A_trn = trn[:trn_info[1]]
     B_trn = trn[trn_info[1]:trn_info[1]+trn_info[2]]
     C_trn = trn[trn_info[1]+trn_info[2]:]
 
+    # calculate the centroids
     A_centroid = np.mean(A_trn, axis=0)
     B_centroid = np.mean(B_trn, axis=0)
     C_centroid = np.mean(C_trn, axis=0)
 
+    # calculate the coefficients of the functions
+    AB_coef = A_centroid - B_centroid
+    BC_coef = B_centroid - C_centroid
+    AC_coef = A_centroid - C_centroid
+
+    # calculate the midpoints of the centroids
     AB_midpoint = np.mean(np.array([A_centroid, B_centroid]), axis = 0)
     BC_midpoint = np.mean(np.array([B_centroid, C_centroid]), axis = 0)
     AC_midpoint = np.mean(np.array([A_centroid, C_centroid]), axis = 0)
 
+    # store discriminant functions as arrays
+    AB_plane = np.append(AB_coef, -1*np.dot(AB_coef, AB_midpoint))
+    BC_plane = np.append(BC_coef, -1*np.dot(BC_coef, BC_midpoint))
+    AC_plane = np.append(AC_coef, -1*np.dot(AC_coef, AC_midpoint))
+
+    # separate testing data
     A_tst = tst[:tst_info[1]]
     B_tst = tst[tst_info[1]:tst_info[1]+tst_info[2]]
     C_tst = tst[tst_info[1]+tst_info[2]:]
 
-    # print trn.shape, tst.shape
-    # print A_trn.shape, B_trn.shape, C_trn.shape
-    # print A_tst.shape, B_tst.shape, C_tst.shape
-    print A_centroid
-    print B_centroid
-    print C_centroid
-
-    print AB_midpoint
-    print BC_midpoint
-    print AC_midpoint
 
     # return {
     #     "tpr": true_positive_rate,
