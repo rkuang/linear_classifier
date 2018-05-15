@@ -1,5 +1,5 @@
 # Starter code for CS 165B HW2
-import numpy
+import numpy as np
 
 def run_train_test(training_input, testing_input):
     """
@@ -29,8 +29,10 @@ def run_train_test(training_input, testing_input):
     """
 
     # TODO: IMPLEMENT
+    training = np.array(training_input[1:])
+    testing = np.array(testing_input[1:])
     
-    return -42
+    print training.shape, testing.shape
 
 
 #######
