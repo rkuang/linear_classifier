@@ -57,14 +57,30 @@ def run_train_test(training_input, testing_input):
     AC_midpoint = np.mean(np.array([A_centroid, C_centroid]), axis = 0)
 
     # store discriminant functions as arrays
-    AB_plane = np.append(AB_coef, -1*np.dot(AB_coef, AB_midpoint))
-    BC_plane = np.append(BC_coef, -1*np.dot(BC_coef, BC_midpoint))
-    AC_plane = np.append(AC_coef, -1*np.dot(AC_coef, AC_midpoint))
+    AB_classifier = np.append(AB_coef, -1*np.dot(AB_coef, AB_midpoint))
+    BC_classifier = np.append(BC_coef, -1*np.dot(BC_coef, BC_midpoint))
+    AC_classifier = np.append(AC_coef, -1*np.dot(AC_coef, AC_midpoint))
 
-    # separate testing data
-    A_tst = tst[:tst_info[1]]
-    B_tst = tst[tst_info[1]:tst_info[1]+tst_info[2]]
-    C_tst = tst[tst_info[1]+tst_info[2]:]
+    confusion = np.zeros(16).reshape(4,4)
+    for i in range(3):
+        confusion[3,i] = tst_info[i+1]
+    confusion[3,3] = np.sum(confusion[3,:])
+
+    for example in tst:
+        AB_score = np.dot(AB_classifier[:3], example) + AB_classifier[3]
+        if AB_score >= 0:
+            AC_score = np.dot(AC_classifier[:3], example) + AC_classifier[3]
+            if AC_score >= 0:
+                confusion[0,3] += 1
+            else:
+                confusion[2,3] += 1
+        else:
+            BC_score = np.dot(BC_classifier[:3], example) + BC_classifier[3]
+            if BC_score >= 0:
+                confusion[1,3] += 1
+            else:
+                confusion[2,3] += 1
+    print confusion
 
 
     # return {
@@ -74,7 +90,6 @@ def run_train_test(training_input, testing_input):
     #     "accuracy": accuracy,
     #     "precision": precision
     # }
-
 
 #######
 # The following functions are provided for you to test your classifier.
