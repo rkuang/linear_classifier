@@ -43,16 +43,32 @@ def run_train_test(training_input, testing_input):
     B_centroid = np.mean(B_trn, axis=0)
     C_centroid = np.mean(C_trn, axis=0)
 
-    # A_tst = tst[:tst_info[1]]
-    # B_tst = tst[tst_info[1]:tst_info[1]+tst_info[2]]
-    # C_tst = tst[tst_info[1]+tst_info[2]:]
+    AB_midpoint = np.mean(np.array([A_centroid, B_centroid]), axis = 0)
+    BC_midpoint = np.mean(np.array([B_centroid, C_centroid]), axis = 0)
+    AC_midpoint = np.mean(np.array([A_centroid, C_centroid]), axis = 0)
+
+    A_tst = tst[:tst_info[1]]
+    B_tst = tst[tst_info[1]:tst_info[1]+tst_info[2]]
+    C_tst = tst[tst_info[1]+tst_info[2]:]
 
     # print trn.shape, tst.shape
     # print A_trn.shape, B_trn.shape, C_trn.shape
     # print A_tst.shape, B_tst.shape, C_tst.shape
-    print A_centroid, B_centroid, C_centroid
+    print A_centroid
+    print B_centroid
+    print C_centroid
 
-    return -42
+    print AB_midpoint
+    print BC_midpoint
+    print AC_midpoint
+
+    # return {
+    #     "tpr": true_positive_rate,
+    #     "fpr": false_positive_rate,
+    #     "error_rate": error_rate,
+    #     "accuracy": accuracy,
+    #     "precision": precision
+    # }
 
 
 #######
