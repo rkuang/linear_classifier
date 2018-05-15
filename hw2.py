@@ -39,13 +39,18 @@ def run_train_test(training_input, testing_input):
     B_trn = trn[trn_info[1]:trn_info[1]+trn_info[2]]
     C_trn = trn[trn_info[1]+trn_info[2]:]
 
-    A_tst = tst[:tst_info[1]]
-    B_tst = tst[tst_info[1]:tst_info[1]+tst_info[2]]
-    C_tst = tst[tst_info[1]+tst_info[2]:]
+    A_centroid = np.mean(A_trn, axis=0)
+    B_centroid = np.mean(B_trn, axis=0)
+    C_centroid = np.mean(C_trn, axis=0)
 
-    print trn.shape, tst.shape
-    print A_trn.shape, B_trn.shape, C_trn.shape
-    print A_tst.shape, B_tst.shape, C_tst.shape
+    # A_tst = tst[:tst_info[1]]
+    # B_tst = tst[tst_info[1]:tst_info[1]+tst_info[2]]
+    # C_tst = tst[tst_info[1]+tst_info[2]:]
+
+    # print trn.shape, tst.shape
+    # print A_trn.shape, B_trn.shape, C_trn.shape
+    # print A_tst.shape, B_tst.shape, C_tst.shape
+    print A_centroid, B_centroid, C_centroid
 
     return -42
 
